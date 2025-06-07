@@ -1,0 +1,12 @@
+@using Microsoft.FluentUI.AspNetCore.Components
+@inherits LayoutComponentBase
+@using DemoVideoConference.Client.Pages
+@using DemoVideoConference.Client.Pages.Admin
+
+<HeaderComponent/>
+<div class=" bg-info-subtle" style="height:98vh">
+    <FluentGrid Justify="JustifyContent.Center" Class="p-5">
+        @Body
+    </FluentGrid>
+</div>
+<FooterComponent/>

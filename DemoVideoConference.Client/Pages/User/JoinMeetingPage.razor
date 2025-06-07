@@ -1,0 +1,104 @@
+@page "/join-meeting/{Meeting}/{MeetingPasscode}"
+@using System.ComponentModel.DataAnnotations
+@using DemoVideoConference.Shared.Meeting.Responses
+@layout AttendeeLayout
+
+<div class="row" style="opacity:@PageOpacity">
+    <div class="col-lg-12 card border-0">
+        <div class="card-body video-conference-container" id="@ContainerId"</div>
+    </div>>
+</div>
+
+<NetcodeHubModal  @bind-Open="IsModalOpen"
+                BootstrapClass="border-info rounded p-2 ml-2 mr-2"
+                CustomStyle="min-width:400px; max-width:500px;">
+            <ContentTemplate>
+                <div class="card">
+                    <div class="card-header">Join Meeting</div>
+                    <div class="card-body">
+                        <FluentEditForm Model="ConnectProfile" Enhance
+                            OnValidSubmit="ConnectToMeeting">
+                            <DataAnnotationsValidator/>
+                            <div class="form-group mb-3">
+                                <FluentTextField Style="width:350px" @bind-Value=ConnectProfile.Name Label="Provide Your Display Name" />
+                                <ValidationMessage For="()=>ConnectProfile.Name"/>
+                            </div>
+                            <FluentButton Appearance="Appearance.Accent"
+                            Type="ButtonType.Submit">Join Meeting</FluentButton>
+                        </FluentEditForm>
+                    </div>
+                </div>
+            </ContentTemplate>      
+</NetcodeHubModal>
+
+<NetcodeHubModal  @bind-Open="IsModalMessageOpen"
+                BootstrapClass="border-info rounded p-2 ml-2 mr-2"
+                CustomStyle="min-width:400px; max-width:500px;">
+            <ContentTemplate>
+                <div class="card">
+                    <div class="card-header">Notifications!</div>
+                    <div class="card-body">
+                        <div class="alert alert-info text-center">@Message</div>
+                        <button class="btn btn-info" @onclick="Ok">Ok</button>
+                    </div>
+                </div>
+            </ContentTemplate>      
+</NetcodeHubModal>
+
+<NetcodeHubScreenLoader Show="ShowLoader" @/>
+@code{
+    int PageOpacity = 0;
+    bool IsModalOpen = false;
+    bool ShowLoader = false;
+    bool IsModalMessageOpen = false;
+    string Message = string.Empty;
+    const string ContainerId = "client-video-container";
+
+    Profile ConnectProfile = new();
+
+
+    [Parameter] public string MeetingId {get; set;} = string.Empty;
+    [Parameter] public string MeetingPasscode {get; set;} = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        if (string.IsNullOrEmpty(MeetingId) || string.IsNullOrEmpty(MeetingPasscode))
+        {
+            Message = "Unable to connect to server: Invalid meeting credentials provided";
+            IsModalMessageOpen = true;
+            return;
+        }
+    }
+
+    protected  override void  OnInitialized()
+    {
+        //show modal for name provision
+        IsModalOpen = true;
+    }
+
+    void Ok() => IsModalMessageOpen = false;
+    public class Profile
+    {
+        [Required]
+        public string Name {get; set;} = string.Empty;
+    }
+
+    async Task ConnectToMeeting()
+    {
+        IsModalOpen = true;
+        TwilioServiceResponse? response = await twilioService.GenerateMeetingToken(ConnectProfile.Name, MeetingId)!;
+
+        if (!response!.IsSuccess)
+        {
+            Message = response.Message!;
+            ShowLoader = false;
+            IsModalMessageOpen = true;
+            IsModalOpen = false;
+            return;
+        }
+        await twilioService.JoinMeeting(token: response.Data!, roomName: MeetingId, containerId: ContainerId);
+
+        PageOpacity = 1;
+        ShowLoader = false;
+    }
+}

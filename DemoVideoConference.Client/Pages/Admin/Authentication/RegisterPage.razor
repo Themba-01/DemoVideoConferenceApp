@@ -1,0 +1,86 @@
+@page "/register"
+<div class="mt-5">
+    <EditForm Model="Register" OnValidSubmit="HandleRegister">
+        <FluentCard class="bg-primary-subtle" Width="300px">
+            <FluentLabel Type="Typography.Header" Class="mb-3"> Kindly Create Account </FluentLabel>
+            <hr />
+            <DataAnnotationsValidator/>
+            <FluentTextField @bind-Value=Register.Name
+                            Label="Full Name"
+                            Maxlength="100"
+                            Class="mb-3"
+                            TextFieldType="TextFieldType.Text"
+                            Style="width:250px" />
+                            <ValidationMessage For="()=>Register.Name"/>
+            
+            <FluentTextField @bind-Value=Register.Email
+                            Label="Email Address"
+                            Maxlength="100"
+                            Class="mb-3"
+                            TextFieldType="TextFieldType.Email"
+                            Style="width:250px" />
+                            <ValidationMessage For="()=>Register.Email"/>
+
+            <FluentTextField @bind-Value=Register.Password
+                            Label="Password"
+                            Maxlength="100"
+                            Class="mb-3"
+                            TextFieldType="TextFieldType.Password"
+                            Style="width:250px" />
+                            <ValidationMessage For="()=>Register.Password"/>
+
+            <FluentTextField @bind-Value=Register.ConfirmPassword
+                            Label="Password"
+                            Maxlength="100"
+                            Class="mb-3"
+                            TextFieldType="TextFieldType.Password"
+                            Style="width:250px" />
+                            <ValidationMessage For="()=>Register.Password"/>
+            <br />
+            <hr />
+            <FluentButton Appearance="Appearance.Accent"
+                          Type="ButtonType.Submit">Login</FluentButton>
+        </FluentCard>
+    </EditForm>
+</div>
+<NetcodeHubScreenLoader Show="ShowLoader"/>
+<NetcodeHubModal @bind-Open="IsModalMessageOpen"
+                BootstrapClass="boarder-info rounded p-2 mr-2"
+                CustomStyle="min-width:400px; max-width:500px;">
+            <ContentTemplate>
+                <div class="card">
+                    <div class="card-header">Notification!</div>
+                    <div class="card-body">
+                        <div class="alert alert-info text-center">@Message</div>
+                        <button class="btn btn-info" @onclick="Ok">Ok</button>
+                    </div>
+                </div>
+            </ContentTemplate>
+</NetcodeHubModal>
+@code{
+    bool ShowLoader = false;
+    bool IsModalMessageOpen = false;
+    string Message = string.Empty;
+    CreateUserRequest Register = new();
+
+    async Task HandleRegister()
+    {
+        ShowLoader = true;
+        await Task.Delay(500);
+        CreateUserResponse? response = await authService.CreateUserAccount(Register)!;
+        if (response!.IsSuccess)
+        {
+            NavManager.NavigateTo("/");
+            return;
+        }
+        ShowLoader = false;
+        Message = response!.Message!;
+        IsModalMessageOpen = true;
+        StateHasChanged();
+    }
+    void Ok()
+    {
+        IsModalMessageOpen = false;
+        StateHasChanged();
+    }
+}

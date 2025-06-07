@@ -1,0 +1,51 @@
+# .NET Build Outputs
+bin/
+obj/
+*.user
+*.suo
+*.cache
+*.csproj.user
+
+# Visual Studio / IDE Files
+.vs/
+.vscode/
+*.code-workspace
+*.sln.docstates
+
+# NuGet Packages
+packages/
+*.nupkg
+
+# Environment and Secrets
+*.env
+appsettings.json
+appsettings.*.json
+*.config
+*.key
+*.pem
+
+# Logs and Temporary Files
+*.log
+*.tmp
+*.bak
+*~
+
+# Dependency Directories
+node_modules/
+bower_components/
+
+# Blazor WebAssembly Output
+wwwroot/**/*.js.map
+wwwroot/**/*.css.map
+
+# Twilio Credentials
+TwilioAccountSid.txt
+TwilioAuthToken.txt
+
+# OS Files
+Thumbs.db
+.DS_Store
+
+# Test Results
+TestResults/
+*.trx

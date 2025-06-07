@@ -1,0 +1,30 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using DemoVideoConference.Client.Services
+@using DemoVideoConference.Client.States
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.AspNetCore.Components.WebAssembly.Http
+@using Microsoft.JSInterop
+@using DemoVideoConference.Client
+@using DemoVideoConference.Client.Layout
+
+@inject NavigationManager NavManager
+@inject IAuthService authService
+@inject IMeetingService meetingService
+@inject ITwilioService twilioService
+@inject CustomAuthStateProvider AuthStateProvider
+@inject IConfiguration config
+
+@using DemoVideoConference.Shared.Authentication.Requests
+@using DemoVideoConference.Shared.Authentication.Responses
+@using Microsoft.AspNetCore.Components.Authorization
+@using NetcodeHub.Packages.Components.Modal
+@using NetcodeHub.Packages.Components.ScreenLoader
+@using Microsoft.FluentUI.AspNetCore.Components
+@using Microsoft.FluentUI.AspNetCore.Components.Icons
+@using Icons = Microsoft.FluentUI.AspNetCore.Components.Icons
+
+
